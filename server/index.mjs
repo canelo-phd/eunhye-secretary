@@ -67,6 +67,7 @@ const server = http.createServer(async (req, res) => {
   try {
     const u = new URL(req.url, 'http://localhost');
     if (req.method === 'OPTIONS') { res.writeHead(204, { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'Content-Type' }); return res.end(); }
+    if (u.pathname === '/api/status') return sendJson(res, { connected: Boolean(key), model, provider: 'OpenAI' });
     if (u.pathname === '/api/files') return sendJson(res, { files: catalog() });
     if (u.pathname === '/api/file') { const rel = u.searchParams.get('path') || ''; const full = path.resolve(wiki, rel); if (!full.startsWith(wiki) || !fs.existsSync(full)) return sendJson(res, { error: 'not found' }, 404); return sendJson(res, { path: rel, name: path.basename(full), text: extract(full) }); }
     if (u.pathname === '/api/chat' && req.method === 'POST') { const b = await readBody(req); return sendJson(res, await ask(String(b.message || ''))); }
