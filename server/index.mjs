@@ -69,7 +69,7 @@ const server = http.createServer(async (req, res) => {
     if (u.pathname === '/api/files') return sendJson(res, { files: catalog() });
     if (u.pathname === '/api/file') { const rel = u.searchParams.get('path') || ''; const full = path.resolve(wiki, rel); if (!full.startsWith(wiki) || !fs.existsSync(full)) return sendJson(res, { error: 'not found' }, 404); return sendJson(res, { path: rel, name: path.basename(full), text: extract(full) }); }
     if (u.pathname === '/api/chat' && req.method === 'POST') { const b = await readBody(req); return sendJson(res, await ask(String(b.message || ''))); }
-    const rel = u.pathname === '/' ? 'index.html' : u.pathname.slice(1); const full = path.resolve(web, rel);
+    const rel = decodeURIComponent(u.pathname === '/' ? 'index.html' : u.pathname.slice(1)); const full = path.resolve(web, rel);
     if (!full.startsWith(web) || !fs.existsSync(full) || fs.statSync(full).isDirectory()) return sendJson(res, { error: 'not found' }, 404);
     const types = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.png': 'image/png' }; res.writeHead(200, { 'Content-Type': types[path.extname(full)] || 'application/octet-stream' }); fs.createReadStream(full).pipe(res);
   } catch (e) { sendJson(res, { error: e.message }, 500); }
