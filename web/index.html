@@ -10,15 +10,16 @@
 <div class="shell">
   <aside class="sidebar">
     <div class="brand"><div class="brand-mark">은</div><div><b>은혜 비서</b><small>Personal knowledge assistant</small></div></div>
-    <nav><button class="nav-item active" data-view="chat"><span>✦</span> 대화</button><button class="nav-item" data-view="wiki"><span>▤</span> 위키 검색</button></nav>
+    <nav><button class="nav-item active" data-view="chat"><span>✦</span> 대화</button><button class="nav-item" data-view="wiki"><span>▤</span> 위키 검색</button><button class="nav-item" data-view="intro"><span>◎</span> 자기소개</button></nav>
     <div class="side-note"><span class="status-dot"></span><div><b>Private workspace</b><small>Career & research archive</small></div></div>
   </aside>
   <main class="main">
     <header class="topbar"><div><span class="eyebrow">YOUR KNOWLEDGE, ORGANIZED</span><h1 id="view-title">은혜와 대화하기</h1></div><div class="top-actions"><span class="pill">GPT-powered</span></div></header>
     <section id="chat-view" class="view active"><div id="messages" class="messages"><div class="welcome"><img src="은혜_비서.png" alt="은혜 비서"><div><span class="eyebrow">안녕하세요, 저는 은혜예요</span><h2>경력과 연구 기록을<br>함께 찾아볼게요.</h2><p>학위, 논문, 수상, 프로젝트에 대해 질문하거나<br>자료를 바탕으로 표와 시각화를 요청해 보세요.</p></div></div><div class="suggestions"><button>제 경력의 핵심을 5줄로 요약해 줘</button><button>저의 학위와 수상 경력을 연도순으로 보여 줘</button><button>연구 주제와 논문을 표로 정리해 줘</button></div></div><form id="chat-form" class="composer"><textarea id="prompt" rows="1" placeholder="은혜에게 질문해 보세요…" required></textarea><button aria-label="보내기">↗</button></form><div class="disclaimer">은혜는 연결된 개인 자료를 바탕으로 답변합니다. 중요한 사실은 원문 문서에서 확인하세요.</div></section>
     <section id="wiki-view" class="view"><div class="wiki-toolbar"><label class="search"><span>⌕</span><input id="search" placeholder="파일명, 분야, 키워드 검색"></label><span id="file-count" class="muted"></span></div><div id="file-grid" class="file-grid"></div></section>
+    <section id="intro-view" class="view"><div class="intro-card"><img src="은혜_비서.png" alt="은혜 비서"><div><span class="eyebrow">자기소개 · SELF-INTRODUCTION</span><h2>안녕하세요, 저는 은혜예요.</h2><p>저는 Angel Canelo의 개인 비서입니다. Angel의 경력, 연구, 학위, 논문, 수상 기록을 찾아 정리하고, 연결된 자료를 바탕으로 정확한 답변과 요약을 제공합니다.</p><p>저의 역할은 Angel Canelo가 필요한 정보를 빠르게 찾도록 돕는 것입니다. 저는 <b>Samsung Electronics</b>에서 근무하는 Angel의 업무와 개인 지식 데이터베이스를 지원합니다.</p></div></div><div class="contact-grid"><div class="contact-card"><span class="eyebrow">PERSONAL EMAIL</span><a href="mailto:angelcanelophd@gmail.com">angelcanelophd@gmail.com</a></div><div class="contact-card"><span class="eyebrow">WORK EMAIL</span><a href="mailto:angel.canelo@samsung.com">angel.canelo@samsung.com</a></div></div><div class="source-list"><span class="eyebrow">PUBLIC PROFILES</span><a href="https://scholar.google.com/citations?user=wnc8LRUAAAAJ&hl=es" target="_blank" rel="noreferrer">Google Scholar <small>Publications and citations ↗</small></a><a href="https://www.linkedin.com/in/angel-canelo-bbbab715/" target="_blank" rel="noreferrer">LinkedIn <small>Professional profile ↗</small></a></div></section>
   </main>
 </div>
 <dialog id="file-modal"><button class="close">×</button><div id="file-content"></div></dialog>
-<script src="config.js"></script><script src="app.js"></script>
+<script src="config.js"></script><script src="profile.js"></script><script src="app.js"></script>
 </body></html>

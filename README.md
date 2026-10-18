@@ -18,8 +18,7 @@ GitHub Pages cannot safely hold an OpenAI key or serve a private document corpus
 4. Run `node server/index.mjs` from this folder.
 5. Open `http://localhost:8787`.
 
-No key is included in this repository.
-
+The profile context also includes the public Google Scholar and LinkedIn URLs. The self-introduction screen displays the personal and work email addresses requested by the owner. Because GitHub Pages is public, publish this repository only when you accept that those contact details are publicly visible.
 ## Deploying Pages
 
 Configure GitHub Pages to publish `/web` from the `main` branch. The Pages app expects `window.ENHE_API_BASE_URL` in `web/config.js` to point to the private API. For a same-origin deployment, reverse proxy `/api` to the server.

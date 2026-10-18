@@ -20,6 +20,7 @@ const key = process.env.OPENAI_API_KEY;
 const model = process.env.OPENAI_MODEL || 'gpt-4o-mini';
 const pdfTool = process.env.PDFTOTEXT || (process.platform === 'win32' ? 'C:/Users/todog/AppData/Local/hermes/git/mingw64/bin/pdftotext.exe' : 'pdftotext');
 const allowed = new Set(['.pdf', '.jpg', '.jpeg', '.png', '.md', '.txt', '.csv', '.json']);
+const profileContext = 'PROFILE SOURCES:\nGoogle Scholar: https://scholar.google.com/citations?user=wnc8LRUAAAAJ&hl=es\nLinkedIn: https://www.linkedin.com/in/angel-canelo-bbbab715/\nPersonal email: angelcanelophd@gmail.com\nWork email: angel.canelo@samsung.com\nWorkplace: Samsung Electronics';
 
 function walk(dir, out = []) {
   for (const ent of fs.readdirSync(dir, { withFileTypes: true })) {
@@ -53,7 +54,7 @@ async function ask(message) {
   const terms = message.toLowerCase().split(/\s+/).filter(x => x.length > 1);
   const relevant = files.filter(f => terms.some(t => (f.name + ' ' + f.path).toLowerCase().includes(t))).slice(0, 8);
   const context = relevant.map(f => 'FILE: ' + f.path + '\n' + extract(path.join(wiki, f.path))).join('\n\n').slice(0, 30000);
-  const system = 'You are 은혜 (Eunhye), a precise Korean personal secretary. Answer only from the supplied personal archive context. If unsupported, say so. Cite source filenames in square brackets. Support summaries, comparisons, tables, statistics, and plots. For numeric chart requests append JSON on a separate line as CHART:{"title":"...","data":[{"label":"...","value":0}]}.\n\nARCHIVE CONTEXT:\n' + (context || files.map(f => f.path).join('\n'));
+  const system = 'You are 은혜 (Eunhye), a precise Korean personal secretary. Answer only from the supplied personal archive context. If unsupported, say so. Cite source filenames in square brackets. Support summaries, comparisons, tables, statistics, and plots. For numeric chart requests append JSON on a separate line as CHART:{"title":"...","data":[{"label":"...","value":0}]}.\n\n' + profileContext + '\n\nARCHIVE CONTEXT:\n' + (context || files.map(f => f.path).join('\n'));
   const r = await fetch('https://api.openai.com/v1/chat/completions', { method: 'POST', headers: { 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' }, body: JSON.stringify({ model, messages: [{ role: 'system', content: system }, { role: 'user', content: message }], temperature: 0.2 }) });
   if (!r.ok) throw new Error(await r.text());
   const d = await r.json();
