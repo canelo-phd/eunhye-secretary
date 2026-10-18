@@ -1,4 +1,4 @@
-const API=(window.ENHE_API_BASE_URL||'').replace(/\/$/,'');const avatar='../images/은혜_비서.png';
+const API=(window.ENHE_API_BASE_URL||'').replace(/\/$/,'');const avatar='은혜_비서.png';
 const $=s=>document.querySelector(s);const messages=$('#messages');
 function esc(s){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function addMessage(text,who='assistant'){const row=document.createElement('div');row.className='message '+who;row.innerHTML=(who==='assistant'?`<img src="${avatar}" alt="은혜">`:'')+`<div class="bubble">${esc(text)}</div>`;messages.append(row);messages.scrollTop=messages.scrollHeight}
