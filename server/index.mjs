@@ -25,7 +25,7 @@ const profileContext = 'PROFILE SOURCES:\nGoogle Scholar: https://scholar.google
 function walk(dir, out = []) {
   for (const ent of fs.readdirSync(dir, { withFileTypes: true })) {
     const p = path.join(dir, ent.name);
-    if (ent.name === 'enhe-secretary' || ent.name === 'images' || ent.name === 'node_modules' || ent.name.startsWith('.')) continue;
+    if (ent.name === 'eunhye-secretary' || ent.name === 'images' || ent.name === 'node_modules' || ent.name.startsWith('.')) continue;
     if (ent.isDirectory()) walk(p, out);
     else if (allowed.has(path.extname(ent.name).toLowerCase())) out.push(p);
   }
@@ -39,6 +39,8 @@ function catalog() {
   });
 }
 function sendJson(res, obj, status = 200) { res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8', 'Access-Control-Allow-Origin': '*' }); res.end(JSON.stringify(obj)); }
+const mime = { '.pdf': 'application/pdf', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.png': 'image/png', '.md': 'text/markdown; charset=utf-8', '.txt': 'text/plain; charset=utf-8', '.csv': 'text/csv; charset=utf-8', '.json': 'application/json; charset=utf-8' };
+function safeWikiFile(rel) { const full = path.resolve(wiki, rel); return full.startsWith(wiki + path.sep) && fs.existsSync(full) && fs.statSync(full).isFile() && allowed.has(path.extname(full).toLowerCase()) ? full : null; }
 function extract(file) {
   try {
     const lower = file.toLowerCase();
@@ -49,19 +51,19 @@ function extract(file) {
 }
 function readBody(req) { return new Promise((resolve, reject) => { let s = ''; req.on('data', x => s += x); req.on('end', () => { try { resolve(JSON.parse(s || '{}')); } catch (e) { reject(e); } }); }); }
 async function ask(message) {
-  if (!key) return { answer: '서버에 OPENAI_API_KEY가 설정되지 않았어요. 새 키를 발급한 뒤 server/.env에 설정해 주세요.' };
+  if (!key) return { answer: '서버에 OPENAI_API_KEY가 설정되지 않았어요. 새 키를 발급한 뒤 server/.env에 설정해 주세요.', sources: [] };
   const files = catalog();
   const terms = message.toLowerCase().split(/\s+/).filter(x => x.length > 1);
   const relevant = files.filter(f => terms.some(t => (f.name + ' ' + f.path).toLowerCase().includes(t))).slice(0, 8);
   const context = relevant.map(f => 'FILE: ' + f.path + '\n' + extract(path.join(wiki, f.path))).join('\n\n').slice(0, 30000);
-  const system = 'You are 은혜 (Eunhye), a precise Korean personal secretary. Answer only from the supplied personal archive context. If unsupported, say so. Cite source filenames in square brackets. Support summaries, comparisons, tables, statistics, and plots. For numeric chart requests append JSON on a separate line as CHART:{"title":"...","data":[{"label":"...","value":0}]}.\n\n' + profileContext + '\n\nARCHIVE CONTEXT:\n' + (context || files.map(f => f.path).join('\n'));
+  const system = 'You are 은혜 (Eunhye), a warm, precise Korean personal secretary. Answer only from the supplied personal archive context. If unsupported, say so. Use clear Markdown headings, bullets, tables where useful, and a few friendly relevant emojis. Cite source filenames in square brackets. Support summaries, comparisons, tables, statistics, and plots. For numeric chart requests append JSON on a separate line as CHART:{"title":"...","data":[{"label":"...","value":0}]}.\n\n' + profileContext + '\n\nARCHIVE CONTEXT:\n' + (context || files.map(f => f.path).join('\n'));
   const r = await fetch('https://api.openai.com/v1/chat/completions', { method: 'POST', headers: { 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json' }, body: JSON.stringify({ model, messages: [{ role: 'system', content: system }, { role: 'user', content: message }], temperature: 0.2 }) });
   if (!r.ok) throw new Error(await r.text());
   const d = await r.json();
   let answer = d.choices?.[0]?.message?.content || '답변이 없습니다.';
   let chart; const marker = 'CHART:'; const at = answer.indexOf(marker);
   if (at >= 0) { try { chart = JSON.parse(answer.slice(at + marker.length).trim()); answer = answer.slice(0, at).trim(); } catch (_) {} }
-  return { answer, chart };
+  return { answer, chart, sources: relevant.map(f => ({ path: f.path, name: f.name })) };
 }
 const server = http.createServer(async (req, res) => {
   try {
@@ -69,7 +71,8 @@ const server = http.createServer(async (req, res) => {
     if (req.method === 'OPTIONS') { res.writeHead(204, { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'Content-Type' }); return res.end(); }
     if (u.pathname === '/api/status') return sendJson(res, { connected: Boolean(key), model, provider: 'OpenAI' });
     if (u.pathname === '/api/files') return sendJson(res, { files: catalog() });
-    if (u.pathname === '/api/file') { const rel = u.searchParams.get('path') || ''; const full = path.resolve(wiki, rel); if (!full.startsWith(wiki) || !fs.existsSync(full)) return sendJson(res, { error: 'not found' }, 404); return sendJson(res, { path: rel, name: path.basename(full), text: extract(full) }); }
+    if (u.pathname === '/api/file') { const rel = u.searchParams.get('path') || ''; const full = safeWikiFile(rel); if (!full) return sendJson(res, { error: 'not found' }, 404); return sendJson(res, { path: rel, name: path.basename(full), ext: path.extname(full).slice(1), text: extract(full) }); }
+    if (u.pathname === '/api/document') { const rel = u.searchParams.get('path') || ''; const full = safeWikiFile(rel); if (!full) return sendJson(res, { error: 'not found' }, 404); res.writeHead(200, { 'Content-Type': mime[path.extname(full).toLowerCase()] || 'application/octet-stream', 'Content-Disposition': 'inline; filename*=UTF-8\'\'' + encodeURIComponent(path.basename(full)) }); return fs.createReadStream(full).pipe(res); }
     if (u.pathname === '/api/chat' && req.method === 'POST') { const b = await readBody(req); return sendJson(res, await ask(String(b.message || ''))); }
     const rel = decodeURIComponent(u.pathname === '/' ? 'index.html' : u.pathname.slice(1)); const full = path.resolve(web, rel);
     if (!full.startsWith(web) || !fs.existsSync(full) || fs.statSync(full).isDirectory()) return sendJson(res, { error: 'not found' }, 404);
