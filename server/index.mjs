@@ -20,7 +20,7 @@ const key = process.env.OPENAI_API_KEY;
 const model = process.env.OPENAI_MODEL || 'gpt-4o-mini';
 const pdfTool = process.env.PDFTOTEXT || (process.platform === 'win32' ? 'C:/Users/todog/AppData/Local/hermes/git/mingw64/bin/pdftotext.exe' : 'pdftotext');
 const allowed = new Set(['.pdf', '.jpg', '.jpeg', '.png', '.md', '.txt', '.csv', '.json']);
-const profileContext = 'PROFILE SOURCES:\nGoogle Scholar: https://scholar.google.com/citations?user=wnc8LRUAAAAJ&hl=es\nLinkedIn: https://www.linkedin.com/in/angel-canelo-bbbab715/\nPersonal email: angelcanelophd@gmail.com\nWork email: angel.canelo@samsung.com\nWorkplace: Samsung Electronics';
+const profileContext = 'PROFILE SOURCES:\nGoogle Scholar: https://scholar.google.com/citations?user=wnc8LRUAAAAJ&hl=es\nLinkedIn: https://www.linkedin.com/in/angel-canelo-bbbab715b\nPersonal email: angelcanelophd@gmail.com\nWork email: angel.canelo@samsung.com\nWorkplace: Samsung Electronics';
 
 function walk(dir, out = []) {
   for (const ent of fs.readdirSync(dir, { withFileTypes: true })) {

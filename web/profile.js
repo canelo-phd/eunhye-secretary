@@ -6,6 +6,6 @@ window.ENHE_PROFILE = {
   workplace: 'Samsung Electronics',
   sources: [
     { label: 'Google Scholar', url: 'https://scholar.google.com/citations?user=wnc8LRUAAAAJ&hl=es', description: 'Publications and citation profile' },
-    { label: 'LinkedIn', url: 'https://www.linkedin.com/in/angel-canelo-bbbab715/', description: 'Professional profile and experience' }
+    { label: 'LinkedIn', url: 'https://www.linkedin.com/in/angel-canelo-bbbab715b', description: 'Professional profile and experience' }
   ]
 };
