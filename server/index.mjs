@@ -25,7 +25,7 @@ const profileContext = 'PROFILE SOURCES:\nGoogle Scholar: https://scholar.google
 function walk(dir, out = []) {
   for (const ent of fs.readdirSync(dir, { withFileTypes: true })) {
     const p = path.join(dir, ent.name);
-    if (ent.name === 'enhe-secretary' || ent.name === 'node_modules' || ent.name.startsWith('.')) continue;
+    if (ent.name === 'enhe-secretary' || ent.name === 'images' || ent.name === 'node_modules' || ent.name.startsWith('.')) continue;
     if (ent.isDirectory()) walk(p, out);
     else if (allowed.has(path.extname(ent.name).toLowerCase())) out.push(p);
   }
