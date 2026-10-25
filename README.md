@@ -1,28 +1,32 @@
-# 은혜 비서 (Eunhye Secretary)
+# Eunhye Secretary
 
-Private personal secretary for career, education, publications, awards, and research documents.
+Public personal archive and AI secretary for Angel Canelo.
+
+Live website: https://canelo-phd.github.io/eunhye-secretary/
 
 ## Architecture
 
-- `web/`: GitHub Pages static frontend (no secrets, no private documents)
-- `server/`: Node.js API for local/private use; reads `WIKI_PATH` and calls OpenAI server-side
-- `data/files.json`: generated file catalog used by the frontend
+- `web/`: GitHub Pages interface, public archive files, archive catalog, and pre-extracted retrieval index.
+- `worker/`: Cloudflare Worker API. It retrieves relevant multilingual archive text and calls OpenAI without exposing the key.
+- `tools/build_archive_index.py`: Regenerates `web/archive-index.json` after public archive updates.
 
-GitHub Pages cannot safely hold an OpenAI key or serve a private document corpus. Deploy the `web/` folder to Pages and run `server/` on a private host (or use a serverless endpoint). Set `VITE_API_BASE_URL` at deployment time or edit `web/config.js`.
+The public website communicates with:
 
-## Run locally
+`https://eunhye-api.angelcanelophd.workers.dev`
 
-1. Create a new OpenAI key after revoking the key previously exposed in chat.
-2. In `server/`, copy `.env.example` to `.env` and set `OPENAI_API_KEY`.
-3. Set `WIKI_PATH=C:/LLM_wiki`.
-4. Run `node server/index.mjs` from this folder.
-5. Open `http://localhost:8787`.
+The OpenAI credential is stored only as Cloudflare Worker Secret `OPENAI_API_KEY`. It must never be committed to this repository or added to GitHub Pages.
 
-The profile context also includes the public Google Scholar and LinkedIn URLs. The self-introduction screen displays the personal and work email addresses requested by the owner. Because GitHub Pages is public, publish this repository only when you accept that those contact details are publicly visible.
-## Deploying Pages
+## Updating the public archive
 
-Configure GitHub Pages to publish `/web` from the `main` branch. The Pages app expects `window.ENHE_API_BASE_URL` in `web/config.js` to point to the private API. For a same-origin deployment, reverse proxy `/api` to the server.
+1. Update the source backup at `C:/Users/todog/내 드라이브/LLM_wiki`.
+2. Copy approved public documents into `web/archive/`, preserving the `awards/`, `career/`, and `research/` paths.
+3. Run:
 
-## Corpus
+   `C:/Users/todog/Python/Python3109/python.exe tools/build_archive_index.py`
 
-The current local catalog contains 15 items under awards, career, images, and research. Documents themselves are intentionally not copied into this repository.
+4. Update `web/catalog.json` if files were added or removed.
+5. Commit and push. GitHub Pages and the Cloudflare Worker Git integration deploy the changes.
+
+## Public archive notice
+
+Everything under `web/archive/` is intentionally public through GitHub and GitHub Pages. The current public résumé is the redacted copy without the phone number.
