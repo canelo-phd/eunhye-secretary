@@ -99,8 +99,20 @@ export default {
     try {
       const records = await indexRecords();
       const queryEmbedding = await embed(expandQuestion(message), env.OPENAI_API_KEY);
+      const lowerMessage = message.toLocaleLowerCase();
+      const wantsAwards = /award|awards|prize|honou?r|certificate|scholarship|수상|상장|증명서/.test(lowerMessage);
+      const wantsDegrees = /degree|degrees|education|academic background|qualification|bachelor|master|phd|doctorate|학위|학력/.test(lowerMessage);
       const explicitTerms = lexicalTerms(message).filter(term => term.length >= 4 && /\d/.test(term)).map(term => ({ term, matches: records.filter(record => record.path.toLocaleLowerCase().includes(term)) })).filter(x => x.matches.length).sort((a, b) => a.matches.length - b.matches.length || b.term.length - a.term.length);
-      const selected = explicitTerms.length ? explicitTerms[0].matches.slice(0, 2) : rank(records, message, queryEmbedding);
+      let selected;
+      if (wantsAwards) {
+        selected = records.filter(record => record.path.startsWith('awards/'));
+        if (wantsDegrees) selected.push(...records.filter(record => record.path === 'career/ANGEL_CANELO_resume.pdf'));
+      } else if (wantsDegrees) {
+        selected = records.filter(record => record.path === 'career/ANGEL_CANELO_resume.pdf' || /Angel_Canelo_(박사|석사|학사)논문\.pdf$/.test(record.path));
+      } else {
+        selected = explicitTerms.length ? explicitTerms[0].matches.slice(0, 2) : rank(records, message, queryEmbedding);
+      }
+      selected = selected.slice(0, 8);
       const context = selected.map(x => `FILE: ${x.path}\n${x.text}`).join('\n\n').slice(0, 26000);
       const instruction = `You are Eunhye, a precise personal archive assistant. Answer only from the archive context. Do not infer facts not supported by the selected documents. Search and reason across English, Spanish, Korean, and other multilingual filenames and text. Reply in the same language used in the user's question unless they explicitly request another language. A filename such as 박사논문 means doctoral/PhD thesis, 석사논문 means master's thesis, and 학사논문 means bachelor's thesis. Summaries must describe the document content, not merely its filename. If evidence is insufficient, say so plainly. Use clear Markdown, tables where helpful, and restrained relevant emojis. Cite source filenames in square brackets.\n\nARCHIVE CONTEXT:\n${context}`;
       const openai = await fetch('https://api.openai.com/v1/chat/completions', {
