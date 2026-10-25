@@ -60,8 +60,12 @@ function rank(records, question, queryEmbedding) {
     const semantic = cosine(queryEmbedding, record.embedding);
     return { ...record, score: lexical + semantic * 12 };
   }).sort((a, b) => b.score - a.score);
-  const exactFilename = records.find(record => lexicalTerms(question).some(term => term.length >= 4 && record.path.toLocaleLowerCase().includes(term)));
-  if (exactFilename) { exactFilename.score = Number.MAX_SAFE_INTEGER; scored.sort((a, b) => b.score - a.score); }
+  const filenameTerms = lexicalTerms(question).filter(term => term.length >= 4);
+  const exactFilename = records.map(record => ({
+    record,
+    score: filenameTerms.reduce((total, term) => total + (record.path.toLocaleLowerCase().includes(term) ? term.length / Math.max(1, records.filter(x => x.path.toLocaleLowerCase().includes(term)).length) : 0), 0),
+  })).sort((a, b) => b.score - a.score)[0];
+  if (exactFilename?.score > 0) { const row = scored.find(x => x.path === exactFilename.record.path); if (row) { row.score = Number.MAX_SAFE_INTEGER; scored.sort((a, b) => b.score - a.score); } }
   if (/current|role|position|samsung|career|employment|work|currently|present/i.test(question)) {
     const resume = scored.find(x => x.path === 'career/ANGEL_CANELO_resume.pdf');
     if (resume) resume.score = Number.MAX_SAFE_INTEGER;
@@ -84,7 +88,7 @@ export default {
     const origin = request.headers.get('Origin') || '';
     const url = new URL(request.url);
     if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors(origin) });
-    if (url.pathname === '/api/status') return json({ connected: Boolean(env.OPENAI_API_KEY), model: CHAT_MODEL, provider: 'OpenAI' }, 200, origin);
+    if (url.pathname === '/api/status') return json({ connected: Boolean(env.OPENAI_API_KEY), model: CHAT_MODEL, provider: 'OpenAI', retrieval: 'semantic-ocr-v2' }, 200, origin);
     if (url.pathname !== '/api/chat' || request.method !== 'POST') return json({ error: 'not found' }, 404, origin);
     if (origin && origin !== PAGES_ORIGIN) return json({ error: 'origin not allowed' }, 403, origin);
     if (!env.OPENAI_API_KEY) return json({ error: 'The OpenAI secret is not configured in this Worker.' }, 503, origin);
@@ -95,7 +99,8 @@ export default {
     try {
       const records = await indexRecords();
       const queryEmbedding = await embed(expandQuestion(message), env.OPENAI_API_KEY);
-      const selected = rank(records, message, queryEmbedding);
+      const explicitTerms = lexicalTerms(message).filter(term => term.length >= 4 && /\d/.test(term)).map(term => ({ term, matches: records.filter(record => record.path.toLocaleLowerCase().includes(term)) })).filter(x => x.matches.length).sort((a, b) => a.matches.length - b.matches.length || b.term.length - a.term.length);
+      const selected = explicitTerms.length ? explicitTerms[0].matches.slice(0, 2) : rank(records, message, queryEmbedding);
       const context = selected.map(x => `FILE: ${x.path}\n${x.text}`).join('\n\n').slice(0, 26000);
       const instruction = `You are Eunhye, a precise personal archive assistant. Answer only from the archive context. Do not infer facts not supported by the selected documents. Search and reason across English, Spanish, Korean, and other multilingual filenames and text. Reply in the same language used in the user's question unless they explicitly request another language. A filename such as 박사논문 means doctoral/PhD thesis, 석사논문 means master's thesis, and 학사논문 means bachelor's thesis. Summaries must describe the document content, not merely its filename. If evidence is insufficient, say so plainly. Use clear Markdown, tables where helpful, and restrained relevant emojis. Cite source filenames in square brackets.\n\nARCHIVE CONTEXT:\n${context}`;
       const openai = await fetch('https://api.openai.com/v1/chat/completions', {
