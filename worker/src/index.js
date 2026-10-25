@@ -82,6 +82,14 @@ function rank(records, question, queryEmbedding) {
   }
   return selected;
 }
+function representativeDocument(records, path, question, queryEmbedding) {
+  const documentChunks = records.filter(record => record.path === path);
+  if (documentChunks.length <= 6) return documentChunks;
+  const terms = lexicalTerms(expandQuestion(question));
+  const scored = documentChunks.map(record => ({ record, score: terms.reduce((n, term) => n + ((record.text + ' ' + record.name).toLocaleLowerCase().split(term).length - 1), 0) + cosine(queryEmbedding, record.embedding) * 12 })).sort((a, b) => b.score - a.score);
+  const picks = [documentChunks[0], documentChunks[Math.floor(documentChunks.length / 2)], documentChunks[documentChunks.length - 1], ...scored.slice(0, 3).map(x => x.record)];
+  return [...new Map(picks.map(record => [record.chunk, record])).values()].sort((a, b) => a.chunk - b.chunk).slice(0, 6);
+}
 
 export default {
   async fetch(request, env) {
@@ -106,7 +114,7 @@ export default {
       const thesisPath = /bachelor|undergraduate|학사/.test(lowerMessage) ? 'research/Angel_Canelo_학사논문.pdf' : /master|석사/.test(lowerMessage) ? 'research/Angel_Canelo_석사논문.pdf' : /phd|doctoral|doctorate|박사/.test(lowerMessage) && /thesis|dissertation|논문|summar|summary|요약/.test(lowerMessage) ? 'research/Angel_Canelo_박사논문.pdf' : '';
       let selected;
       if (thesisPath) {
-        selected = records.filter(record => record.path === thesisPath);
+        selected = representativeDocument(records, thesisPath, message, queryEmbedding);
       } else if (wantsAwards) {
         selected = records.filter(record => record.path.startsWith('awards/'));
         if (wantsDegrees) selected.push(...records.filter(record => record.path === 'career/ANGEL_CANELO_resume.pdf'));

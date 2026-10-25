@@ -28,7 +28,7 @@ for path in sorted(root.rglob("*")):
         text = overrides[rel] + "\n\n" + text
     if not text:
         text = "[No embedded text layer. This visual document requires OCR or vision review.]"
-    text = text[:30000]
+    # Keep every page/chunk so retrieval can reason over whole long documents.
     for start in range(0, len(text), 3200):
         records.append({"path": rel, "name": path.name, "chunk": start // 3200, "text": text[start:start + 3600]})
 out.write_text(json.dumps({"records": records}, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
