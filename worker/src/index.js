@@ -110,6 +110,7 @@ export default {
       const lowerMessage = message.toLocaleLowerCase();
       const wantsAwards = /award|awards|prize|honou?r|certificate|scholarship|수상|상장|증명서/.test(lowerMessage);
       const wantsDegrees = /degree|degrees|education|academic background|qualification|bachelor|master|phd|doctorate|학위|학력/.test(lowerMessage);
+      const wantsResearch = /research|topic|topics|paper|papers|publication|publications|article|articles|논문|연구/.test(lowerMessage);
       const explicitTerms = lexicalTerms(message).filter(term => term.length >= 4 && /\d/.test(term)).map(term => ({ term, matches: records.filter(record => record.path.toLocaleLowerCase().includes(term)) })).filter(x => x.matches.length).sort((a, b) => a.matches.length - b.matches.length || b.term.length - a.term.length);
       const thesisPath = /bachelor|undergraduate|학사/.test(lowerMessage) ? 'research/Angel_Canelo_학사논문.pdf' : /master|석사/.test(lowerMessage) ? 'research/Angel_Canelo_석사논문.pdf' : /phd|doctoral|doctorate|박사/.test(lowerMessage) && /thesis|dissertation|논문|summar|summary|요약/.test(lowerMessage) ? 'research/Angel_Canelo_박사논문.pdf' : '';
       let selected;
@@ -118,6 +119,8 @@ export default {
       } else if (wantsAwards) {
         selected = records.filter(record => record.path.startsWith('awards/'));
         if (wantsDegrees) selected.push(...records.filter(record => record.path === 'career/ANGEL_CANELO_resume.pdf'));
+      } else if (wantsResearch) {
+        selected = [...new Map(records.filter(record => record.path.startsWith('research/')).map(record => [record.path, record])).values()].sort((a, b) => (b.path.includes('NTIRE_2025') ? 1 : 0) - (a.path.includes('NTIRE_2025') ? 1 : 0));
       } else if (wantsDegrees) {
         selected = records.filter(record => record.path === 'career/ANGEL_CANELO_resume.pdf' || /Angel_Canelo_(박사|석사|학사)논문\.pdf$/.test(record.path));
       } else {
@@ -125,7 +128,7 @@ export default {
       }
       selected = selected.slice(0, 8);
       const context = selected.map(x => `FILE: ${x.path}\n${x.text}`).join('\n\n').slice(0, 26000);
-      const instruction = `You are Eunhye, a precise personal archive assistant. Answer only from the archive context. Do not infer facts not supported by the selected documents. Search and reason across English, Spanish, Korean, and other multilingual filenames and text. Reply in the same language used in the user's question unless they explicitly request another language. A filename such as 박사논문 means doctoral/PhD thesis, 석사논문 means master's thesis, and 학사논문 means bachelor's thesis. Summaries must describe the selected document's actual extracted content and must never use guesses such as "likely" or infer a thesis from its title alone. If evidence is insufficient, say so plainly. Use clear Markdown, tables where helpful, and restrained relevant emojis. Cite source filenames in square brackets.\n\nARCHIVE CONTEXT:\n${context}`;
+      const instruction = `You are Eunhye, a precise personal archive assistant. Answer only from the archive context. Do not infer facts not supported by the selected documents. Search and reason across English, Spanish, Korean, and other multilingual filenames and text. Reply in the same language used in the user's question unless they explicitly request another language. A filename such as 박사논문 means doctoral/PhD thesis, 석사논문 means master's thesis, and 학사논문 means bachelor's thesis. Summaries must describe the selected document's actual extracted content and must never use guesses such as "likely" or infer a thesis from its title alone. If evidence is insufficient, say so plainly. Use clear Markdown, tables where helpful, and MUST include 2–5 meaningful emojis that clarify structure or findings (for example 📚, 🏆, 🧠, 📊, ✅), without turning the answer into decoration. Cite source filenames in square brackets.\n\nARCHIVE CONTEXT:\n${context}`;
       const openai = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
         headers: { Authorization: `Bearer ${env.OPENAI_API_KEY}`, 'Content-Type': 'application/json' },
