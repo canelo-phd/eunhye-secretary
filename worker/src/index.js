@@ -19,12 +19,17 @@ function tokens(text = '') {
 }
 function rank(records, question) {
   const terms = tokens(question);
-  return records.map(record => {
+  const ranked = records.map(record => {
     const haystack = (record.name + ' ' + record.text).toLocaleLowerCase();
     const filename = record.name.toLocaleLowerCase();
     const score = terms.reduce((n, term) => n + (haystack.split(term).length - 1) + 3 * (filename.split(term).length - 1), 0);
     return { ...record, score };
-  }).filter(x => x.score > 0).sort((a, b) => b.score - a.score).slice(0, 8);
+  }).filter(x => x.score > 0).sort((a, b) => b.score - a.score);
+  if (/\b(current|role|position|samsung|career|employment|work)\b/i.test(question)) {
+    const resume = records.find(x => x.path === 'career/ANGEL_CANELO_resume.pdf');
+    if (resume) return [resume, ...ranked.filter(x => x.path !== resume.path)].slice(0, 8);
+  }
+  return ranked.slice(0, 8);
 }
 async function indexRecords() {
   const response = await fetch(INDEX_URL, { cf: { cacheTtl: 3600, cacheEverything: true } });
