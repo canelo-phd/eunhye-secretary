@@ -1,3 +1,2 @@
-// Set this to the HTTPS URL of a private API when deploying beyond this computer.
-// Leave empty for the local server at http://localhost:8787.
-window.ENHE_API_BASE_URL = '';
+// Local development uses the private Node server; the published site uses Cloudflare Worker.
+window.ENHE_API_BASE_URL = location.hostname === 'localhost' ? '' : 'https://eunhye-api.angelcanelophd.workers.dev';
