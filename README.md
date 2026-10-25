@@ -1,32 +1,45 @@
 # Eunhye Secretary
 
-Public personal archive and AI secretary for Angel Canelo.
+A personal archive companion for exploring professional work, research, qualifications, and publications through a clean web interface and an AI-assisted chat.
 
-Live website: https://canelo-phd.github.io/eunhye-secretary/
+Live site: https://canelo-phd.github.io/eunhye-secretary/
 
-## Architecture
+## Meet the AI Secretary
 
-- `web/`: GitHub Pages interface, public archive files, archive catalog, and pre-extracted retrieval index.
-- `worker/`: Cloudflare Worker API. It retrieves relevant multilingual archive text and calls OpenAI without exposing the key.
-- `tools/build_archive_index.py`: Regenerates `web/archive-index.json` after public archive updates.
+<p align="center">
+  <img src="web/%EC%9D%80%ED%98%9C_%EB%B9%84%EC%84%9C_%EC%9D%B8%EB%AC%BC%EC%82%AC%EC%A7%84.png" alt="Eunhye, the AI secretary" width="360">
+</p>
 
-The public website communicates with:
+The chat is designed for natural questions about the public archive. It can locate relevant material, compare information across documents, and present grounded summaries with links to the source documents.
 
-`https://eunhye-api.angelcanelophd.workers.dev`
+## What the app includes
 
-The OpenAI credential is stored only as Cloudflare Worker Secret `OPENAI_API_KEY`. It must never be committed to this repository or added to GitHub Pages.
+- About page with a professional introduction and public profile links
+- AI secretary chat for archive-based questions
+- Wiki Search workspace for browsing folders, documents, and previews
+- Source links below grounded chat responses
+- English and Korean interface support
+- Search designed to handle multilingual document names and content
 
-## Updating the public archive
+## App structure
 
-1. Update the source backup at `C:/Users/todog/내 드라이브/LLM_wiki`.
-2. Copy approved public documents into `web/archive/`, preserving the `awards/`, `career/`, and `research/` paths.
-3. Run:
+The app is organized into three connected experiences:
 
-   `C:/Users/todog/Python/Python3109/python.exe tools/build_archive_index.py`
+1. About
+   A concise professional profile and a starting point for visitors.
 
-4. Update `web/catalog.json` if files were added or removed.
-5. Commit and push. GitHub Pages and the Cloudflare Worker Git integration deploy the changes.
+2. Chat
+   A conversational assistant that finds relevant public archive content before answering. Responses can cite the documents used so visitors can inspect the source material directly.
 
-## Public archive notice
+3. Wiki Search
+   A document workspace with a folder tree, searchable file list, and inline preview for supported documents.
 
-Everything under `web/archive/` is intentionally public through GitHub and GitHub Pages. The current public résumé is the redacted copy without the phone number.
+The user interface and public documents are published as a static website. The AI request handling is kept separate so private configuration remains outside the public website.
+
+## Public archive
+
+Documents shown in Wiki Search are intentionally published for visitors to view. Source links in chat responses open the corresponding document in the Wiki Search workspace.
+
+## Privacy and security
+
+Private credentials and deployment configuration are not included in this repository or exposed in the public website.
