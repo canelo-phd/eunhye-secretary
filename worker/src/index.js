@@ -1,5 +1,5 @@
 const PAGES_ORIGIN = 'https://canelo-phd.github.io';
-const INDEX_URL = 'https://canelo-phd.github.io/eunhye-secretary/archive-index.json';
+const INDEX_URL = 'https://canelo-phd.github.io/eunhye-secretary/archive-index.json?v=ocr-20261025';
 const CHAT_MODEL = 'gpt-4o-mini';
 const EMBEDDING_MODEL = 'text-embedding-3-small';
 
@@ -60,6 +60,8 @@ function rank(records, question, queryEmbedding) {
     const semantic = cosine(queryEmbedding, record.embedding);
     return { ...record, score: lexical + semantic * 12 };
   }).sort((a, b) => b.score - a.score);
+  const exactFilename = records.find(record => lexicalTerms(question).some(term => term.length >= 4 && record.path.toLocaleLowerCase().includes(term)));
+  if (exactFilename) { exactFilename.score = Number.MAX_SAFE_INTEGER; scored.sort((a, b) => b.score - a.score); }
   if (/current|role|position|samsung|career|employment|work|currently|present/i.test(question)) {
     const resume = scored.find(x => x.path === 'career/ANGEL_CANELO_resume.pdf');
     if (resume) resume.score = Number.MAX_SAFE_INTEGER;
