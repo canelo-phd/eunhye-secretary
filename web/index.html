@@ -1,16 +1,76 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Eunhye · Personal Secretary</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="styles.css">
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Eunhye · Personal Secretary</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<div class="shell"><main class="main">
-<header class="topbar"><div><h1 id="view-title" data-en="Eunhye Secretary" data-ko="은혜 비서">Eunhye Secretary</h1></div><div class="top-actions"><span id="connection-status" class="pill">Connecting…</span><nav class="top-menu"><button class="nav-item active" data-view="chat">💬 <span data-en="Chat" data-ko="대화">Chat</span></button><button class="nav-item" data-view="wiki">📚 <span data-en="Wiki Search" data-ko="위키 검색">Wiki Search</span></button><button class="nav-item" data-view="intro">✨ <span data-en="Self-introduction" data-ko="자기소개">Self-introduction</span></button></nav><button id="language-toggle" class="language-toggle">한국어</button></div></header>
-<section id="chat-view" class="view active"><div id="messages" class="messages"><div class="message assistant initial-greeting"><img src="은혜_비서_인물사진.png" alt="Eunhye"><div class="bubble" data-en="Hello! I’m Eunhye, Angel Canelo’s personal secretary. 🌷 I can help you find relevant documents through Wiki Search and turn the information in them into accurate answers, summaries, tables, timelines, and charts.\n\nFor the best results, ask a specific question, mention a document, topic, year, or research area, and tell me the format you want. You can also browse and preview original documents directly in Wiki Search." data-ko="안녕하세요! 저는 Angel Canelo의 개인 비서 은혜입니다. 🌷 위키 검색에서 관련 문서를 찾고, 그 안의 정보를 바탕으로 정확한 답변, 요약, 표, 타임라인, 차트를 만들어 드릴 수 있어요.\n\n더 정확한 답변을 위해 문서, 주제, 연도 또는 연구 분야를 구체적으로 말씀해 주세요. 원하는 형식도 알려주시면 됩니다. 위키 검색에서 원본 문서를 바로 미리 볼 수도 있어요.">Hello! I’m Eunhye, Angel Canelo’s personal secretary. 🌷 I can help you find relevant documents through Wiki Search and turn the information in them into accurate answers, summaries, tables, timelines, and charts.<br><br>For the best results, ask a specific question, mention a document, topic, year, or research area, and tell me the format you want. You can also browse and preview original documents directly in Wiki Search.</div></div><div class="suggestions"><button data-en="✨ Summarize my career in five lines" data-ko="✨ 제 경력의 핵심을 5줄로 요약해 줘">✨ Summarize my career in five lines</button><button data-en="🏆 List my degrees and awards by year" data-ko="🏆 저의 학위와 수상 경력을 연도순으로 보여 줘">🏆 List my degrees and awards by year</button><button data-en="📊 Create a table of my research topics and papers" data-ko="📊 연구 주제와 논문을 표로 정리해 줘">📊 Create a table of my research topics and papers</button></div></div><form id="chat-form" class="composer"><textarea id="prompt" rows="1" placeholder="Ask Eunhye a question…" required></textarea><button aria-label="Send">↗</button></form><div class="disclaimer" data-en="📌 Archive-grounded answers include the documents Eunhye used." data-ko="📌 자료 기반 답변에는 은혜가 사용한 원본 문서가 표시됩니다.">📌 Archive-grounded answers include the documents Eunhye used.</div></section>
-<section id="wiki-view" class="view"><div class="wiki-toolbar"><label class="search"><span>⌕</span><input id="search" placeholder="Search files, fields, or keywords"></label><span id="file-count" class="muted"></span></div><div class="wiki-layout"><aside class="folder-panel"><div class="folder-panel-title">FOLDERS</div><div id="folder-tree" class="folder-tree"></div></aside><div class="wiki-workspace"><div id="file-grid" class="file-grid"></div><section id="preview-panel" class="preview-panel"><div class="preview-empty">📄<h2>Select a document</h2><p>Choose a file to read it directly here.</p></div></section></div></div></section>
-<section id="intro-view" class="view"><div class="intro-card"><img class="full-portrait" src="은혜_비서.png" alt="Eunhye"><div><span class="eyebrow" data-en="SELF-INTRODUCTION" data-ko="자기소개">SELF-INTRODUCTION</span><h2 data-en="Hello, I’m Eunhye. 🌷" data-ko="안녕하세요, 저는 은혜예요. 🌷">Hello, I’m Eunhye. 🌷</h2><p data-en="I am Angel Canelo’s personal secretary. I organize and explain his career, research, degrees, publications, awards, and professional records using the connected archive." data-ko="저는 Angel Canelo의 개인 비서입니다. 연결된 자료를 바탕으로 Angel의 경력, 연구, 학위, 논문, 수상 기록을 정리하고 설명합니다.">I am Angel Canelo’s personal secretary. I organize and explain his career, research, degrees, publications, awards, and professional records using the connected archive.</p><p data-en="I support Angel Canelo’s work at Samsung Electronics and help him find reliable information quickly." data-ko="저는 Samsung Electronics에서 근무하는 Angel Canelo의 업무를 지원하고 필요한 정보를 빠르게 찾도록 돕습니다.">I support Angel Canelo’s work at Samsung Electronics and help him find reliable information quickly.</p></div></div><div class="contact-grid"><div class="contact-card"><span class="eyebrow">PERSONAL EMAIL</span><a href="mailto:angelcanelophd@gmail.com">angelcanelophd@gmail.com</a></div><div class="contact-card"><span class="eyebrow">WORK EMAIL</span><a href="mailto:angel.canelo@samsung.com">angel.canelo@samsung.com</a></div></div><div class="source-list"><span class="eyebrow">PUBLIC PROFILES</span><a href="https://scholar.google.com/citations?user=wnc8LRUAAAAJ&hl=es" target="_blank" rel="noreferrer">Google Scholar <small>Publications and citations ↗</small></a><a href="https://www.linkedin.com/in/angel-canelo-bbbab715b" target="_blank" rel="noreferrer">LinkedIn <small>Professional profile ↗</small></a></div></section>
-</main></div>
-<script src="config.js"></script><script src="profile.js"></script><script src="app.js"></script>
-</body></html>
+  <div class="shell"><main class="main">
+    <header class="topbar">
+      <div><h1 id="view-title" data-en="About Angel Canelo" data-ko="Angel Canelo 소개">About Angel Canelo</h1></div>
+      <div class="top-actions">
+        <span id="connection-status" class="pill">Connecting…</span>
+        <nav class="top-menu">
+          <button class="nav-item active" data-view="intro"><span data-en="About Angel Canelo" data-ko="Angel Canelo 소개">About Angel Canelo</span></button>
+          <button class="nav-item" data-view="chat">💬 <span data-en="Chat" data-ko="대화">Chat</span></button>
+          <button class="nav-item" data-view="wiki">📚 <span data-en="Wiki Search" data-ko="위키 검색">Wiki Search</span></button>
+        </nav>
+        <button id="language-toggle" class="language-toggle">한국어</button>
+      </div>
+    </header>
+
+    <section id="intro-view" class="view active">
+      <div class="intro-card angel-card">
+        <img class="angel-portrait" src="angel-canelo.jpg" alt="Dr. Angel Canelo">
+        <div>
+          <span class="eyebrow" data-en="ABOUT ANGEL CANELO" data-ko="ANGEL CANELO 소개">ABOUT ANGEL CANELO</span>
+          <h2 data-en="Dr. Angel Canelo" data-ko="Angel Canelo 박사">Dr. Angel Canelo</h2>
+          <p class="lead" data-en="Staff Engineer at Samsung Electronics, developing deep learning-based solutions for image enhancement and restoration." data-ko="Samsung Electronics의 Staff Engineer로서 이미지 향상과 복원을 위한 딥러닝 기반 솔루션을 개발하고 있습니다.">Staff Engineer at Samsung Electronics, developing deep learning-based solutions for image enhancement and restoration.</p>
+          <p data-en="Angel earned a Ph.D. in Electronics Engineering from Hanyang University in 2024. His doctoral research explored insect brain-inspired algorithms for vision-based navigation, bridging computational neuroscience, computer vision, and autonomous systems." data-ko="Angel은 2024년 Hanyang University에서 전자공학 박사학위를 받았습니다. 박사 연구에서는 곤충 뇌에서 영감을 얻은 시각 기반 내비게이션 알고리즘을 탐구하며 계산신경과학, 컴퓨터 비전, 자율 시스템을 연결했습니다.">Angel earned a Ph.D. in Electronics Engineering from Hanyang University in 2024. His doctoral research explored insect brain-inspired algorithms for vision-based navigation, bridging computational neuroscience, computer vision, and autonomous systems.</p>
+          <p data-en="His academic background also includes a Master’s degree in Industrial Engineering and a Bachelor’s degree in Electronics and Automation Engineering from the University of Extremadura. His work spans deep learning, computer vision, reinforcement learning, robotics, control theory, and embedded systems." data-ko="University of Extremadura에서 산업공학 석사와 전자·자동화공학 학사를 취득했습니다. 딥러닝, 컴퓨터 비전, 강화학습, 로보틱스, 제어 이론, 임베디드 시스템을 아우르는 연구를 수행하고 있습니다.">His academic background also includes a Master’s degree in Industrial Engineering and a Bachelor’s degree in Electronics and Automation Engineering from the University of Extremadura. His work spans deep learning, computer vision, reinforcement learning, robotics, control theory, and embedded systems.</p>
+        </div>
+      </div>
+      <div class="contact-grid">
+        <div class="contact-card"><span class="eyebrow">PERSONAL EMAIL</span><a href="mailto:angelcanelophd@gmail.com">angelcanelophd@gmail.com</a></div>
+        <div class="contact-card"><span class="eyebrow">WORK EMAIL</span><a href="mailto:angel.canelo@samsung.com">angel.canelo@samsung.com</a></div>
+      </div>
+      <div class="source-list">
+        <span class="eyebrow">PUBLIC PROFILES</span>
+        <a href="/api/document?path=career%2FANGEL_CANELO_resume.pdf" target="_blank" rel="noreferrer">Resume PDF <small>Open résumé ↗</small></a>
+        <a href="https://www.linkedin.com/in/angel-canelo-bbbab715b" target="_blank" rel="noreferrer">LinkedIn <small>Professional profile ↗</small></a>
+        <a href="https://scholar.google.com/citations?user=wnc8LRUAAAAJ&hl=es" target="_blank" rel="noreferrer">Google Scholar <small>Publications and citations ↗</small></a>
+      </div>
+      <div class="intro-chat-cta">
+        <p data-en="Have a question about Angel’s career, research, qualifications, publications, or awards?" data-ko="Angel의 경력, 연구, 학력, 논문 또는 수상 경력에 관해 궁금하신가요?">Have a question about Angel’s career, research, qualifications, publications, or awards?</p>
+        <button id="start-chat" data-en="Start chatting with Eunhye" data-ko="은혜와 대화 시작하기">Start chatting with Eunhye</button>
+      </div>
+    </section>
+
+    <section id="chat-view" class="view">
+      <div id="messages" class="messages">
+        <img class="eunhye-full-chat" src="은혜_비서.png" alt="Eunhye full portrait">
+        <div class="message assistant initial-greeting">
+          <img src="은혜_비서_인물사진.png" alt="Eunhye">
+          <div class="bubble" data-en="Hello! I’m Eunhye, Angel Canelo’s personal secretary. I can help you find relevant documents through Wiki Search and turn the information in them into accurate answers, summaries, tables, timelines, and charts.<br><br>For the best results, ask a specific question, mention a document, topic, year, or research area, and tell me the format you want. You can also browse and preview original documents directly in Wiki Search." data-ko="안녕하세요! 저는 Angel Canelo의 개인 비서 은혜입니다. 위키 검색에서 관련 문서를 찾고, 그 안의 정보를 바탕으로 정확한 답변, 요약, 표, 타임라인, 차트를 만들어 드릴 수 있어요.<br><br>더 정확한 답변을 위해 문서, 주제, 연도 또는 연구 분야를 구체적으로 말씀해 주세요. 원하는 형식도 알려주시면 됩니다. 위키 검색에서 원본 문서를 바로 미리 볼 수도 있어요.">Hello! I’m Eunhye, Angel Canelo’s personal secretary. I can help you find relevant documents through Wiki Search and turn the information in them into accurate answers, summaries, tables, timelines, and charts.<br><br>For the best results, ask a specific question, mention a document, topic, year, or research area, and tell me the format you want. You can also browse and preview original documents directly in Wiki Search.</div>
+        </div>
+        <div class="suggestions">
+          <button data-en="✨ Summarize my career in five lines" data-ko="✨ 제 경력의 핵심을 5줄로 요약해 줘">✨ Summarize my career in five lines</button>
+          <button data-en="🏆 List my degrees and awards by year" data-ko="🏆 저의 학위와 수상 경력을 연도순으로 보여 줘">🏆 List my degrees and awards by year</button>
+          <button data-en="📊 Create a table of my research topics and papers" data-ko="📊 연구 주제와 논문을 표로 정리해 줘">📊 Create a table of my research topics and papers</button>
+        </div>
+      </div>
+      <form id="chat-form" class="composer"><textarea id="prompt" rows="1" placeholder="Ask Eunhye a question…" required></textarea><button aria-label="Send">↗</button></form>
+      <div class="disclaimer" data-en="📌 Archive-grounded answers include the documents Eunhye used." data-ko="📌 자료 기반 답변에는 은혜가 사용한 원본 문서가 표시됩니다.">📌 Archive-grounded answers include the documents Eunhye used.</div>
+    </section>
+
+    <section id="wiki-view" class="view">
+      <div class="wiki-toolbar"><label class="search"><span>⌕</span><input id="search" placeholder="Search files, fields, or keywords"></label><span id="file-count" class="muted"></span></div>
+      <div class="wiki-layout"><aside class="folder-panel document-tree"><div class="folder-panel-title">WIKI DOCUMENTS</div><div id="folder-tree" class="folder-tree"></div></aside><section id="preview-panel" class="preview-panel"><div class="preview-empty">📄<h2>Select a document</h2><p>Expand the folders and choose a file to read it directly here.</p></div></section></div>
+    </section>
+  </main></div>
+  <script src="config.js"></script><script src="profile.js"></script><script src="app.js"></script>
+</body>
+</html>

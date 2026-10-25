@@ -76,7 +76,7 @@ const server = http.createServer(async (req, res) => {
     if (u.pathname === '/api/chat' && req.method === 'POST') { const b = await readBody(req); return sendJson(res, await ask(String(b.message || ''))); }
     const rel = decodeURIComponent(u.pathname === '/' ? 'index.html' : u.pathname.slice(1)); const full = path.resolve(web, rel);
     if (!full.startsWith(web) || !fs.existsSync(full) || fs.statSync(full).isDirectory()) return sendJson(res, { error: 'not found' }, 404);
-    const types = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.png': 'image/png' }; res.writeHead(200, { 'Content-Type': types[path.extname(full)] || 'application/octet-stream' }); fs.createReadStream(full).pipe(res);
+    const types = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg' }; res.writeHead(200, { 'Content-Type': types[path.extname(full)] || 'application/octet-stream' }); fs.createReadStream(full).pipe(res);
   } catch (e) { sendJson(res, { error: e.message }, 500); }
 });
 server.listen(port, () => console.log('은혜 비서 running at http://localhost:' + port));
