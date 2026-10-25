@@ -5,6 +5,8 @@ import subprocess
 
 root = pathlib.Path(r"C:/Users/todog/내 드라이브/LLM_wiki")
 out = pathlib.Path(r"C:/eunhye-secretary/web/archive-index.json")
+overrides_path = pathlib.Path(r"C:/eunhye-secretary/tools/ocr_overrides.json")
+overrides = json.loads(overrides_path.read_text(encoding="utf-8")) if overrides_path.exists() else {}
 pdftotext = r"C:/Users/todog/AppData/Local/hermes/git/mingw64/bin/pdftotext.exe"
 allowed = {".pdf", ".jpg", ".jpeg", ".png", ".md", ".txt", ".csv", ".json"}
 records = []
@@ -22,6 +24,8 @@ for path in sorted(root.rglob("*")):
     elif ext in {".md", ".txt", ".csv", ".json"}:
         text = path.read_text(encoding="utf-8", errors="replace")
     text = " ".join(text.split())
+    if rel in overrides:
+        text = overrides[rel] + "\n\n" + text
     if not text:
         text = "[No embedded text layer. This visual document requires OCR or vision review.]"
     text = text[:30000]
