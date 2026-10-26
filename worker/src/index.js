@@ -140,6 +140,20 @@ export default {
       } else {
         selected = archiveIntent ? (explicitTerms.length ? explicitTerms[0].matches.slice(0, 2) : rank(records, message, queryEmbedding)) : [];
       }
+      if (wantsResearch && /table/i.test(lowerMessage) && /\b(?:my|angel|canelo)\b/i.test(lowerMessage)) {
+        const inventory = [
+          ['2025', 'Efficient burst HDR and restoration', 'NTIRE 2025 Challenge on Efficient Burst HDR and Restoration: Datasets, Methods, and Results', 'research/Lee_NTIRE_2025_Challenge_on_Efficient_Burst_HDR_and_Restoration_Datasets_CVPRW_2025_paper.pdf'],
+          ['2025', 'Drosophila vision and navigation', 'Integrative models of visually guided steering in Drosophila', 'research/Integrative models of visually guided steering in Drosophila.pdf'],
+          ['August 2024', 'Brain-inspired vision-based navigation', 'Doctoral thesis: Brain to artificial agents: Insect brain-inspired algorithms for vision-based navigation', 'research/Angel_Canelo_박사논문.pdf'],
+          ['2019', 'Human-inspired orientation and balance control', 'A Human-inspired Simulator for the Study of Orientation and Balance Control', 'research/A Human-inspired Simulator for the Study of Orientation and Balance Control.pdf'],
+          ['2018', 'Human vestibular-system modeling and simulation', 'Modeling of the human vestibular system and integration in a simulator for the study of orientation and balance control', 'research/Modeling of the human vestibular system and integration in a simulator for the study of orientation and balance control.pdf'],
+          ['September 2017', 'Human vestibular-system modeling and simulation', 'Master’s thesis: Modelado del sistema vestibular humano e integración en un simulador para el estudio del control de orientación y balance', 'research/Angel_Canelo_석사논문.pdf'],
+          ['July 2015', 'Traffic-light control systems', 'Bachelor’s thesis: Diseño de sistema de control de semáforos en intersecciones aisladas', 'research/Angel_Canelo_학사논문.pdf'],
+        ];
+        const sources = inventory.map(([, , , path]) => records.find(record => record.path === path)).filter(Boolean).map(record => ({ path: record.path, name: record.name }));
+        const answer = `## Research topics and papers 📚\n\n| Year | Author | Topic | Paper / thesis |\n|---|---|---|---|\n${inventory.map(([year, topic, title]) => `| ${year} | Angel Canelo | ${topic} | ${title} |`).join('\n')}\n\nAll years are taken from the corresponding document’s publication or thesis date. 📊`;
+        return json({ answer, sources }, 200, origin);
+      }
       selected = selected.slice(0, 8);
       const requiredResearchFiles = wantsResearch ? selected.filter(x => x.path.startsWith('research/')).map(x => x.path).join(', ') : '';
       const context = selected.map(x => `FILE: ${x.path}\n${x.text}`).join('\n\n').slice(0, 26000);
