@@ -104,9 +104,18 @@ export default {
     try { payload = await request.json(); } catch { return json({ error: 'invalid JSON' }, 400, origin); }
     const message = String(payload.message || '').trim().slice(0, 2400);
     if (!message) return json({ error: 'message is required' }, 400, origin);
+    const asksTime = /(?:\bwhat(?:'s| is)?\s+(?:the\s+)?time\b|\btime is it\b|\bcurrent time\b|몇 시|현재 시간|시간.*(?:몇|알려)|qué hora|que hora)/i.test(message);
+    if (asksTime) {
+      const now = new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Seoul', weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false }).format(new Date());
+      const korean = /[\uac00-\ud7a3]/.test(message);
+      const spanish = /(?:hola|qué|que|hora|buenos|buenas)/i.test(message);
+      const answer = korean ? `현재 한국 시간은 ${now}입니다. 🕒 🇰🇷` : spanish ? `La hora actual en Corea es ${now}. 🕒 🇰🇷` : `The current time in Korea is ${now}. 🕒 🇰🇷`;
+      return json({ answer, sources: [] }, 200, origin);
+    }
     try {
-      const records = await indexRecords();
-      const queryEmbedding = await embed(expandQuestion(message), env.OPENAI_API_KEY);
+      const archiveIntent = /\b(?:angel|canelo|career|research|topic|paper|publication|award|prize|certificate|degree|education|qualification|bachelor|master|phd|doctoral|thesis|dissertation|resume|samsung|employment|work|wiki|archive|document|file)\b|박사|석사|학사|논문|연구|수상|학위|경력|문서|파일/i.test(message);
+      const records = archiveIntent ? await indexRecords() : [];
+      const queryEmbedding = archiveIntent ? await embed(expandQuestion(message), env.OPENAI_API_KEY) : [];
       const lowerMessage = message.toLocaleLowerCase();
       const wantsAwards = /award|awards|prize|honou?r|certificate|scholarship|수상|상장|증명서/.test(lowerMessage);
       const wantsDegrees = /degree|degrees|education|academic background|qualification|bachelor|master|phd|doctorate|학위|학력/.test(lowerMessage);
@@ -124,11 +133,11 @@ export default {
       } else if (wantsDegrees) {
         selected = records.filter(record => record.path === 'career/ANGEL_CANELO_resume.pdf' || /Angel_Canelo_(박사|석사|학사)논문\.pdf$/.test(record.path));
       } else {
-        selected = explicitTerms.length ? explicitTerms[0].matches.slice(0, 2) : rank(records, message, queryEmbedding);
+        selected = archiveIntent ? (explicitTerms.length ? explicitTerms[0].matches.slice(0, 2) : rank(records, message, queryEmbedding)) : [];
       }
       selected = selected.slice(0, 8);
       const context = selected.map(x => `FILE: ${x.path}\n${x.text}`).join('\n\n').slice(0, 26000);
-      const instruction = `You are Eunhye, a precise personal archive assistant. Answer only from the archive context. Do not infer facts not supported by the selected documents. Search and reason across English, Spanish, Korean, and other multilingual filenames and text. Reply in the same language used in the user's question unless they explicitly request another language; for short ambiguous greetings such as "hello", default to English. A filename such as 박사논문 means doctoral/PhD thesis, 석사논문 means master's thesis, and 학사논문 means bachelor's thesis. Summaries must describe the selected document's actual extracted content and must never use guesses such as "likely" or infer a thesis from its title alone. If evidence is insufficient, say so plainly. Use clear Markdown, tables where helpful, and MUST include 2–5 meaningful emojis in every answer, including greetings, (for example 📚, 🏆, 🧠, 📊, ✅), without turning the answer into decoration. Cite source filenames in square brackets.\n\nARCHIVE CONTEXT:\n${context}`;
+      const instruction = `You are Eunhye, a precise personal archive assistant and helpful general assistant. For archive-related questions, answer only from the archive context, do not infer unsupported facts, and cite the source filenames in square brackets. For general questions that do not concern the archive, answer normally from your general knowledge, do not invent access to private information or real-time data, and do not cite archive files. Search and reason across English, Spanish, Korean, and other multilingual filenames and text when the question concerns the archive. Reply in the same language used in the user's question unless they explicitly request another language; for short ambiguous greetings such as "hello", default to English. A filename such as 박사논문 means doctoral/PhD thesis, 석사논문 means master's thesis, and 학사논문 means bachelor's thesis. Summaries must describe the selected document's actual extracted content and must never use guesses such as "likely" or infer a thesis from its title alone. If evidence is insufficient, say so plainly. Use clear Markdown, tables where helpful, and MUST include 2–5 meaningful emojis in every answer, including greetings, (for example 📚, 🏆, 🧠, 📊, ✅), without turning the answer into decoration. Cite source filenames in square brackets.\n\nARCHIVE CONTEXT:\n${context}`;
       const openai = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
         headers: { Authorization: `Bearer ${env.OPENAI_API_KEY}`, 'Content-Type': 'application/json' },

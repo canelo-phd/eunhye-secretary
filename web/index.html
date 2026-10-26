@@ -24,7 +24,7 @@
 
     <section id="intro-view" class="view active">
       <div class="intro-card angel-card">
-        <img class="angel-portrait" src="angel-canelo.jpg" alt="Dr. Angel Canelo">
+        <button id="portrait-trigger" class="portrait-trigger" type="button" aria-label="Open Angel Canelo portrait in full view"><img class="angel-portrait" src="angel-canelo.jpg" alt="Dr. Angel Canelo"></button>
         <div>
           <span class="eyebrow" data-en="ABOUT ANGEL CANELO" data-ko="ANGEL CANELO 소개">ABOUT ANGEL CANELO</span>
           <h2 data-en="Dr. Angel Canelo" data-ko="Angel Canelo 박사">Dr. Angel Canelo</h2>
@@ -71,6 +71,10 @@
       <div class="wiki-layout"><aside class="folder-panel document-tree"><div class="folder-panel-title">WIKI DOCUMENTS</div><div id="folder-tree" class="folder-tree"></div></aside><section id="preview-panel" class="preview-panel"><div class="preview-empty">📄<h2>Select a document</h2><p>Expand the folders and choose a file to read it directly here.</p></div></section></div>
     </section>
   </main></div>
+  <dialog id="portrait-modal" class="portrait-modal" aria-label="Full view of Angel Canelo portrait">
+    <button id="portrait-close" class="portrait-close" type="button" aria-label="Close full portrait">×</button>
+    <img src="angel-canelo.jpg" alt="Dr. Angel Canelo at Samsung">
+  </dialog>
   <script src="config.js"></script><script src="app.js"></script>
 </body>
 </html>
