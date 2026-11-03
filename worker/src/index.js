@@ -1,6 +1,6 @@
 const PAGES_ORIGIN = 'https://canelo-phd.github.io';
 const INDEX_URL = 'https://canelo-phd.github.io/eunhye-secretary/archive-index.json?v=ocr-20261025';
-const CHAT_MODEL = 'gpt-4o-mini';
+const CHAT_MODEL = 'gpt-6-luna';
 const EMBEDDING_MODEL = 'text-embedding-3-small';
 
 function cors(origin = '') {
@@ -161,7 +161,7 @@ export default {
       const openai = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
         headers: { Authorization: `Bearer ${env.OPENAI_API_KEY}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ model: CHAT_MODEL, temperature: 0.2, messages: [{ role: 'system', content: instruction }, { role: 'user', content: message }] }),
+        body: JSON.stringify({ model: CHAT_MODEL, messages: [{ role: 'system', content: instruction }, { role: 'user', content: message }] }),
       });
       if (!openai.ok) throw new Error(await openai.text());
       const result = await openai.json();
